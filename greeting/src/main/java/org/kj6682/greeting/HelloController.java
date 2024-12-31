@@ -1,4 +1,4 @@
-package org.kj6682.catalog;
+package org.kj6682.greeting;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

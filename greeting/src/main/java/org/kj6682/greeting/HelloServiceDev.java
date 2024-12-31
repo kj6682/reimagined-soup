@@ -1,4 +1,4 @@
-package org.kj6682.catalog;
+package org.kj6682.greeting;
 
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.context.annotation.Profile;

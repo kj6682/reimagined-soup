@@ -1,4 +1,4 @@
-package org.kj6682.catalog;
+package org.kj6682.greeting;
 
 public interface HelloService {
     public String sayHello();

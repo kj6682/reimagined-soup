@@ -24,12 +24,4 @@ public class CalculatorApplication {
     }
 
 
-    public ApplicationRunner lister(JdbcTemplate jdbc) {
-        return (args) -> {
-            jdbc.query("select * from pg_catalog.pg_tables", rs -> {
-                System.out.printf("Table: %s.%s%n", rs.getString(1), rs.getString(2));
-            });
-        };
-    }    
-
 }// :)

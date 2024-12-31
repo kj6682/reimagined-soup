@@ -1,4 +1,4 @@
-package org.kj6682.catalog;
+package org.kj6682.greeting;
 
 
 import org.junit.jupiter.api.Assertions;
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = CatalogApplication.class)
-@ActiveProfiles(value = "prod")
-public class ProdActiveProfileUnitTest {
+@SpringBootTest(classes = GreetingApplication.class)
+@ActiveProfiles(value = "dev")
+public class DevActiveProfileUnitTest {
 
     @Value("${profile.property.value}")
     private String propertyString;
@@ -17,6 +17,6 @@ public class ProdActiveProfileUnitTest {
     @Test
     void whenDevIsActive_thenValueShouldBeKeptFromApplicationYaml() {
         System.out.println(propertyString);
-        Assertions.assertEquals("This is the catalog application in PROD", propertyString);
+        Assertions.assertEquals("This is the catalog application", propertyString);
     }
 }
