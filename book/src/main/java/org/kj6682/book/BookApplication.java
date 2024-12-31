@@ -32,7 +32,6 @@ public class BookApplication {
         };
     }
 
-    @Profile("book")
     @Bean
     public ApplicationRunner booksInitialiser(BookService bookService) {
         return args -> {
