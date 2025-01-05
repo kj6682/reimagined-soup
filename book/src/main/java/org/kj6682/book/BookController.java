@@ -1,39 +1,70 @@
 package org.kj6682.book;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ServerErrorException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.*;
 
-import java.rmi.ServerException;
+import java.util.List;
+import java.util.Optional;
 
-@Controller
+@RestController
+@RequestMapping("/api/books")
 public class BookController {
 
-    private final BookService bookService;
-
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
-
-    @GetMapping("/books.html")
-    public String all(Model model) {
-        model.addAttribute("books", bookService.findAll());
-        return "books/list";
-    }
-
-    @GetMapping(value="/books.html", params = "isbn")
-    public String get(@RequestParam("isbn") String isbn, Model model) {
-        bookService.find(isbn).ifPresent(book->model.addAttribute("book", book));
-        return "books/details";
-    }
+    private final JdbcTemplate jdbc;
     
-    @GetMapping("/books/500")
-    public void error(){
-        var cause = new NullPointerException("Dummy Exception");
-        throw new ServerErrorException( cause.getMessage(), cause);
+    @Autowired
+    private BookRepository bookRepository;
+
+    public BookController(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 
-}//:)
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public Book createBook(@RequestBody Book book) {
+        return bookRepository.save(book);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            Book updatedBook = book.get();
+            updatedBook.setTitle(bookDetails.getTitle());
+            updatedBook.setAuthor(bookDetails.getAuthor());
+            updatedBook.setIsbn(bookDetails.getIsbn());
+            return ResponseEntity.ok(bookRepository.save(updatedBook));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            bookRepository.delete(book.get());
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/show-tables")
+    public List<String> showTables() {
+        var sql = "select tablename from pg_catalog.pg_tables";
+        return jdbc.queryForList(sql, String.class);
+    }
+}
