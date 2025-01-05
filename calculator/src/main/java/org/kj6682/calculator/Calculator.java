@@ -2,7 +2,6 @@ package org.kj6682.calculator;
 
 import java.util.Collection;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component

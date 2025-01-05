@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -32,6 +31,7 @@ public class CalculatorControllerTest {
 
     @Test
     void successful_calculation() throws Exception {
+        logger.info("Active profile: {}", activeProfile);
         when(calculator.calculate(10, 15, '*')).thenReturn(150);
 
         var request = MockMvcRequestBuilders.get("/calculate")

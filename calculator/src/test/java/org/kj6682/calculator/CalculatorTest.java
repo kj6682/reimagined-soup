@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
  
 public class CalculatorTest {
     private static final Logger logger = LoggerFactory.getLogger(CalculatorTest.class);
@@ -23,6 +22,7 @@ public class CalculatorTest {
 
     @BeforeEach
     public void setup() {
+        logger.info("setup");
         mockOperation = Mockito.mock(Operation.class);
         calculator = new Calculator(Collections.singletonList(mockOperation));
     }

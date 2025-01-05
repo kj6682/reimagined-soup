@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ActiveProfiles;
 
  
 public class MultiplicationTest {
@@ -18,6 +17,7 @@ public class MultiplicationTest {
 
     @Test
     public void should_match_sign() {
+        logger.info("should_match_sign");
         assertTrue(operation.handles('*'));
         assertFalse(operation.handles('/'));
     }
