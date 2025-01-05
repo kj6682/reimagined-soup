@@ -21,7 +21,7 @@ public class BookController {
         this.jdbc = jdbc;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
