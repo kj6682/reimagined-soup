@@ -1,70 +1,31 @@
 package org.kj6682.book;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
-
-    private final JdbcTemplate jdbc;
-    
-    @Autowired
-    private BookRepository bookRepository;
-
-    public BookController(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
+    private final BookService bookService;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
-    @GetMapping("/")
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    @GetMapping
+    public Iterable<Book> all() {
+        return bookService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        Optional<Book> book = bookRepository.findById(id);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{isbn}")
+    public ResponseEntity<Book> get(@PathVariable("isbn") String isbn) {
+        return ResponseEntity.of(bookService.find(isbn));
     }
 
     @PostMapping
-    public Book createBook(@RequestBody Book book) {
-        return bookRepository.save(book);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            Book updatedBook = book.get();
-            updatedBook.setTitle(bookDetails.getTitle());
-            updatedBook.setAuthor(bookDetails.getAuthor());
-            updatedBook.setIsbn(bookDetails.getIsbn());
-            return ResponseEntity.ok(bookRepository.save(updatedBook));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            bookRepository.delete(book.get());
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/show-tables")
-    public List<String> showTables() {
-        var sql = "select tablename from pg_catalog.pg_tables";
-        return jdbc.queryForList(sql, String.class);
+    public ResponseEntity<Book> create(@RequestBody Book book, UriComponentsBuilder uriComponentsBuilder) {
+        var created = bookService.create(book);
+        var newBookUri = uriComponentsBuilder.path("/api/books/{isbn}").build(created.isbn());
+        return ResponseEntity.created(newBookUri).body(created);
     }
 }
