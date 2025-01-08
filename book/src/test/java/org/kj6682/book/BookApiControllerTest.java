@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(BookController.class)
-public class BookControllerTest {
+@WebMvcTest(BookApiController.class)
+public class BookApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,31 +32,29 @@ public class BookControllerTest {
         when(bookService.findAll())
                 .thenReturn(List.of(new Book("1234", "Uno", List.of("auth 01", "auth 02")),
                         new Book("5678", "Due", List.of("auth 03", "auth 04"))));
-        mockMvc.perform(get("/books.html"))
+        mockMvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("books/list"))
-                .andExpect(model().attribute("books", Matchers.hasSize(2)));
+                .andExpect(jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$[*].isbn", Matchers.containsInAnyOrder("1234", "5678")))
+                .andExpect(jsonPath("$[*].title", Matchers.containsInAnyOrder("Uno", "Due")));
     }
 
     @Test
     public void shouldReturn404WhenBookNotFound() throws Exception{
         when(bookService.find(anyString())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/books.html").param("isbn", "1234"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("books/details"))
-                .andExpect(model().attributeDoesNotExist("books"));
+        mockMvc.perform(get("/api/books/123"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void shouldReturnBookWhenFound() throws Exception{
-        Book book = new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"));
-        when(bookService.find(anyString())).thenReturn(Optional.of(book));
+        when(bookService.find(anyString())).thenReturn(Optional.of(new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"))));
 
-        mockMvc.perform(get("/books.html").param("isbn", "123"))
+        mockMvc.perform(get("/api/books/122"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("books/details"))
-                .andExpect(model().attribute("book", Matchers.is(book)));
+                .andExpect(jsonPath("$.isbn", Matchers.equalTo("123")))
+                .andExpect(jsonPath("$.title", Matchers.equalTo("La coscienza di Zeno")));
     }
 
     public void shouldAddBook() throws Exception{
