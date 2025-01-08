@@ -29,4 +29,8 @@ public class BookApplication {
         };
     }
 
+    @Bean
+    public CustomizedErrorAttributes errorAttributes(){
+        return new CustomizedErrorAttributes();
+    }
 }
