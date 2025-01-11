@@ -6,13 +6,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<h1>Available Books</h1>
+<h1 th:text="#{books.list.title}">Available Books</h1>
 <table>
     <thead>
     <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>ISBN</th>
+        <th th:text="#{books.list.table.title}">Title</th>
+        <th th:text="#{books.list.table.author}">Author</th>
+        <th th:text="#{books.list.table.isbn}">ISBN</th>
     </tr>
     </thead>
     <tbody>

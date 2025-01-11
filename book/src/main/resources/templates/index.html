@@ -2,10 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Spring Boot Recipes - Library</title>
+    <title th:text="#{main.title}">Spring Boot Recipes - Library</title>
 </head>
 <body>
-<h1>Library</h1>
-<a th:href="@{/books.html}" href="#">List of books</a>
+<h1 th:text="#{index.title}">Library</h1>
+<a th:href="@{/books.html}" href="#" th:text="#{index.books.link}">List of books</a>
+<h3>Language</h3>
+<span th:text="#{lang.change}"></span>:
+<select id="locales">
+    <option value=""></option>
+    <option value="en" th:text="#{lang.eng}"></option>
+    <option value="it" th:text="#{lang.it}"></option>
+    <option value="fr" th:text="#{lang.fr}"></option>
+</select>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#locales").change(function () {
+            var selectedOption = $('#locales').val();
+            if (selectedOption != ''){
+                window.location.replace('/books.html?lang=' + selectedOption);
+            }
+        });
+    });
+</script>
 </body>
 </html>
