@@ -25,7 +25,7 @@ public class BookApiController {
     @PostMapping
     public ResponseEntity<Book> create(@RequestBody Book book, UriComponentsBuilder uriComponentsBuilder) {
         var created = bookService.create(book);
-        var newBookUri = uriComponentsBuilder.path("/api/books/{isbn}").build(created.isbn());
+        var newBookUri = uriComponentsBuilder.path("/api/books/{isbn}").build(created.getIsbn());
         return ResponseEntity.created(newBookUri).body(created);
     }
 }

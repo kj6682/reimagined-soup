@@ -1,11 +1,9 @@
 package org.kj6682.book;
 
-import org.springframework.stereotype.Service;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-@Service
+//@Service
 public class InMemoryBookService implements BookService{
 
     private final Map<String, Book> books = new ConcurrentHashMap<>();    @Override
@@ -15,7 +13,7 @@ public class InMemoryBookService implements BookService{
 
     @Override
     public Book create(Book book) {
-        books.put(book.isbn(), book);
+        books.put(book.getIsbn(), book);
         return book;
     }
 

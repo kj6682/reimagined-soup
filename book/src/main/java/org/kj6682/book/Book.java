@@ -1,25 +1,47 @@
 package org.kj6682.book;
 
+import jakarta.persistence.*;
+
 import java.util.List;
-import java.util.Objects;
 
-public record Book(
+@Entity
+public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String isbn;
+    private String title;
 
-        String isbn,
-        String title,
-        List<String> authors
+    @ElementCollection
+    @CollectionTable(name = "book_authors", joinColumns = @JoinColumn(name = "book_id"))
+    @Column(name = "author")
+    private List<String> authors;
 
-) {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn);
+    public Book() {}
+
+    public Book(String isbn, String title, List<String> authors) {
+        this.isbn = isbn;
+        this.title = title;
+        this.authors = authors;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(isbn);
+    public Long getId() {
+        return id;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<String> authors) {
+        this.authors = authors;
     }
 }

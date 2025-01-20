@@ -6,4 +6,4 @@ services:
       - 'POSTGRES_USER=springboot3'
       - 'POSTGRES_PASSWORD=recipes'
     ports:
-      - '5432'
+      - 5432:5432
