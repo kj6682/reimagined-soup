@@ -3,10 +3,13 @@ package org.kj6682.book;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-//@Service
-public class InMemoryBookService implements BookService{
 
-    private final Map<String, Book> books = new ConcurrentHashMap<>();    @Override
+//@Service
+public class InMemoryBookService implements BookService {
+
+    private final Map<String, Book> books = new ConcurrentHashMap<>();
+
+    @Override
     public Iterable<Book> findAll() {
         return books.values();
     }

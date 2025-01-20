@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.LocaleResolver;
@@ -32,6 +33,7 @@ public class BookApplication implements WebMvcConfigurer {
     }
 
     @Bean
+    @Profile("init-postgres")
     public CommandLineRunner demo(BookRepository repository) {
         return (args) -> {
             // Save a few books with a list of authors
