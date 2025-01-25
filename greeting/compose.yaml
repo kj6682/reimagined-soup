@@ -1,0 +1,32 @@
+services:
+  app:
+    build: greeting-backend
+    ports:
+      - 8080:8080
+    environment:
+      - POSTGRES_DB=example
+    networks:
+      - greeting
+  db:
+    image: postgres:17.2
+    restart: always
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - greeting
+    environment:
+      - POSTGRES_DB=example
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    ports:
+      - 5432:5432  # Expose the database port to the host machine
+    expose:
+      - 5432
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: greeting-db/password.txt
+networks:
+  greeting:

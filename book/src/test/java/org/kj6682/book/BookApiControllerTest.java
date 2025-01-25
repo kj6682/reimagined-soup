@@ -33,8 +33,10 @@ public class BookApiControllerTest {
     @Test
     public void shouldReturnListOfBooks() throws Exception {
         when(bookService.findAll())
-                .thenReturn(List.of(new Book("1234", "Uno", List.of("auth 01", "auth 02")),
-                        new Book("5678", "Due", List.of("auth 03", "auth 04"))));
+                .thenReturn(
+                        List.of(
+                                new Book("1234", "Uno", List.of("auth 01", "auth 02")),
+                                new Book("5678", "Due", List.of("auth 03", "auth 04"))));
         mockMvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
