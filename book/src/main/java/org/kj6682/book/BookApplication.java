@@ -35,25 +35,31 @@ public class BookApplication implements WebMvcConfigurer {
     @Bean
     @Profile("init-postgres")
     public CommandLineRunner demo(BookService bookService) {
+        log.info("Initializing demo...");
         return (args) -> {
+            // Delete if any record exists
             bookService.deleteAllBooks();
             // Save a few books with a list of authors
             bookService.initializeDatabase();
-            // Fetch all books
-            log.info("Books found with findAll():");
-            log.info("-------------------------------");
-            for (Book book : bookService.findAll()) {
-                log.info(book.toString());
-            }
-            log.info("");
-
-            // Fetch an individual book by ID
-            Book book = bookService.find("9780060935467").get();
-            log.info("Book found with findById(9780060935467):");
-            log.info("--------------------------------");
-            log.info(book.toString());
-            log.info("");
+            showInitialRecords(bookService);
         };
+    }
+
+    private static void showInitialRecords(BookService bookService) {
+        // Fetch all books
+        log.info("Books found with findAll():");
+        log.info("-------------------------------");
+        for (Book book : bookService.findAll()) {
+            log.info(book.toString());
+        }
+        log.info("");
+
+        // Fetch an individual book by ID
+        Book book = bookService.find("9780060935467").get();
+        log.info("Book found with findById(9780060935467):");
+        log.info("--------------------------------");
+        log.info(book.toString());
+        log.info("");
     }
 
 
