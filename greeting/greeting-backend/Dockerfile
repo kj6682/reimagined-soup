@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.7.0
 
+# Builder stage
 FROM --platform=$BUILDPLATFORM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /workdir/server
 COPY pom.xml /workdir/server/pom.xml
@@ -8,27 +9,27 @@ RUN mvn dependency:go-offline
 COPY src /workdir/server/src
 RUN mvn install
 
+# Development environment stage
 FROM builder AS dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
-EOF
+RUN apt-get update && apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN <<EOF
-useradd -s /bin/bash -m idea
-groupadd docker
-usermod -aG docker idea
-EOF
-  # install Docker tools (cli, buildx, compose)
+RUN useradd -s /bin/bash -m idea && \
+    groupadd docker && \
+    usermod -aG docker idea
+
+# Install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 CMD ["mvn", "spring-boot:run"]
 
-FROM builder as prepare-production
+# Prepare production stage
+FROM builder AS prepare-production
 RUN mkdir -p target/dependency
 WORKDIR /workdir/server/target/dependency
 RUN jar -xf ../*.jar
 
-FROM eclipse-temurin:21
+# Final stage
+FROM eclipse-temurin:21-jre-alpine
 
 EXPOSE 8080
 VOLUME /tmp
