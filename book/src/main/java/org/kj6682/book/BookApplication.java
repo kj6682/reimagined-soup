@@ -34,41 +34,22 @@ public class BookApplication implements WebMvcConfigurer {
 
     @Bean
     @Profile("init-postgres")
-    public CommandLineRunner demo(BookRepository repository) {
+    public CommandLineRunner demo(BookService bookService) {
         return (args) -> {
+            bookService.deleteAllBooks();
             // Save a few books with a list of authors
-            repository.save(
-                    new Book("9780061120084",
-                            "To Kill a Mockingbird",
-                            Arrays.asList("Harper Lee")));
-            repository.save(
-                    new Book("9780451524935",
-                            "1984",
-                            Arrays.asList("George Orwell")));
-            repository.save(
-                    new Book("9780618260300",
-                            "The Hobbit",
-                            Arrays.asList("J.R.R. Tolkien")));
-            repository.save(
-                    new Book("9780140449136",
-                            "The Lord of the Rings",
-                            Arrays.asList("J.R.R. Tolkien")));
-            repository.save(
-                    new Book("9780060935467",
-                            "To Kill a Mockingbird",
-                            Arrays.asList("Harper Lee", "Another Author")));
-
+            bookService.initializeDatabase();
             // Fetch all books
             log.info("Books found with findAll():");
             log.info("-------------------------------");
-            for (Book book : repository.findAll()) {
+            for (Book book : bookService.findAll()) {
                 log.info(book.toString());
             }
             log.info("");
 
             // Fetch an individual book by ID
-            Book book = repository.findById(1L);
-            log.info("Book found with findById(1L):");
+            Book book = bookService.find("9780060935467").get();
+            log.info("Book found with findById(9780060935467):");
             log.info("--------------------------------");
             log.info(book.toString());
             log.info("");
