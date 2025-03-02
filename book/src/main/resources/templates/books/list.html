@@ -13,6 +13,7 @@
         <th th:text="#{books.list.table.title}">Title</th>
         <th th:text="#{books.list.table.author}">Author</th>
         <th th:text="#{books.list.table.isbn}">ISBN</th>
+        <th th:text="#{books.list.table.location}">Location</th>
     </tr>
     </thead>
     <tbody>
@@ -20,6 +21,7 @@
         <td th:text="${book.title}">Title</td>
         <td th:text="${book.authors}">Authors</td>
         <td><a th:href="@{/books.html(isbn=${book.isbn})}" th:text="${book.isbn}" href="#">ISBN</a></td>
+        <td th:text="${book.location}">Location</td>
     </tr>
     </tbody>
 </table>

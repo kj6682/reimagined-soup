@@ -33,8 +33,8 @@ public class BookControllerTest {
     @Test
     public void shouldReturnListOfBooks() throws Exception{
         when(bookService.findAll())
-                .thenReturn(List.of(new Book("1234", "Uno", List.of("auth 01", "auth 02")),
-                        new Book("5678", "Due", List.of("auth 03", "auth 04"))));
+                .thenReturn(List.of(new Book("1234", "Uno", List.of("auth 01", "auth 02"), "Shelf A"),
+                        new Book("5678", "Due", List.of("auth 03", "auth 04"), "Shelf B")));
         mockMvc.perform(get("/books.html"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("books/list"))
@@ -43,7 +43,7 @@ public class BookControllerTest {
 
     @Test
     public void shouldReturn404WhenBookNotFound() throws Exception{
-        when(bookService.find(anyString())).thenReturn(Optional.empty());
+        when(bookService.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/books.html").param("isbn", "1234"))
                 .andExpect(status().isOk())
@@ -53,8 +53,8 @@ public class BookControllerTest {
 
     @Test
     public void shouldReturnBookWhenFound() throws Exception{
-        Book book = new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"));
-        when(bookService.find(anyString())).thenReturn(Optional.of(book));
+        Book book = new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"), "Shelf C");
+        when(bookService.findByIsbn(anyString())).thenReturn(Optional.of(book));
 
         mockMvc.perform(get("/books.html").param("isbn", "123"))
                 .andExpect(status().isOk())
@@ -63,10 +63,10 @@ public class BookControllerTest {
     }
 
     public void shouldAddBook() throws Exception{
-        when(bookService.create(any(Book.class))).thenReturn(new Book("123456789", "Test Book Stored", List.of("T. Author")));
+        when(bookService.createBook(any(Book.class))).thenReturn(new Book("123456789", "Test Book Stored", List.of("T. Author"), "Shelf D"));
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"isbn\" : \"123456789\", \"title\" : \"Test Book\", \"authors\" : [\"T. Author\"]}"))
+                        .content("{ \"isbn\" : \"123456789\", \"title\" : \"Test Book\", \"authors\" : [\"T. Author\"], \"location\": \"Shelf D\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/books/123456789"));
 

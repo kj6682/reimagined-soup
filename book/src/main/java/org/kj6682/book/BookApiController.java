@@ -19,12 +19,12 @@ public class BookApiController {
 
     @GetMapping("/{isbn}")
     public ResponseEntity<Book> get(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.of(bookService.find(isbn));
+        return ResponseEntity.of(bookService.findByIsbn(isbn));
     }
 
     @PostMapping
     public ResponseEntity<Book> create(@RequestBody Book book, UriComponentsBuilder uriComponentsBuilder) {
-        var created = bookService.create(book);
+        var created = bookService.createBook(book);
         var newBookUri = uriComponentsBuilder.path("/api/books/{isbn}").build(created.getIsbn());
         return ResponseEntity.created(newBookUri).body(created);
     }

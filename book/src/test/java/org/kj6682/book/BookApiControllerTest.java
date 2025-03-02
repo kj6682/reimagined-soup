@@ -35,8 +35,8 @@ public class BookApiControllerTest {
         when(bookService.findAll())
                 .thenReturn(
                         List.of(
-                                new Book("1234", "Uno", List.of("auth 01", "auth 02")),
-                                new Book("5678", "Due", List.of("auth 03", "auth 04"))));
+                                new Book("1234", "Uno", List.of("auth 01", "auth 02"), "Shelf A"),
+                                new Book("5678", "Due", List.of("auth 03", "auth 04"), "Shelf B")));
         mockMvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -46,7 +46,7 @@ public class BookApiControllerTest {
 
     //@Test
     public void shouldReturn404WhenBookNotFound() throws Exception {
-        when(bookService.find(anyString())).thenReturn(Optional.empty());
+        when(bookService.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/books/123"))
                 .andExpect(status().isNotFound());
@@ -54,7 +54,7 @@ public class BookApiControllerTest {
 
     //@Test
     public void shouldReturnBookWhenFound() throws Exception {
-        when(bookService.find(anyString())).thenReturn(Optional.of(new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"))));
+        when(bookService.findByIsbn(anyString())).thenReturn(Optional.of(new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"), "Shelf C")));
 
         mockMvc.perform(get("/api/books/122"))
                 .andExpect(status().isOk())
@@ -63,10 +63,10 @@ public class BookApiControllerTest {
     }
 
     public void shouldAddBook() throws Exception {
-        when(bookService.create(any(Book.class))).thenReturn(new Book("123456789", "Test Book Stored", List.of("T. Author")));
+        when(bookService.createBook(any(Book.class))).thenReturn(new Book("123456789", "Test Book Stored", List.of("T. Author"), "Shelf D"));
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"isbn\" : \"123456789\", \"title\" : \"Test Book\", \"authors\" : [\"T. Author\"]}"))
+                        .content("{ \"isbn\" : \"123456789\", \"title\" : \"Test Book\", \"authors\" : [\"T. Author\"], \"location\": \"Shelf D\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/books/123456789"));
 
