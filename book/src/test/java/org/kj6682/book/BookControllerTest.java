@@ -11,11 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
@@ -44,33 +42,63 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$[*].title", Matchers.containsInAnyOrder("Uno", "Due")));
     }
 
-    //@Test
-    public void shouldReturn404WhenBookNotFound() throws Exception {
-        when(bookService.findByIsbn(anyString())).thenReturn(Optional.empty());
+    @Test
+    public void shouldReturnBookWhenFound() throws Exception {
+        String isbn = "1234";
+        when(bookService.findByIsbn(isbn))
+                .thenReturn(Optional.of(new Book(isbn, "Uno", List.of("auth 01", "auth 02"), "Shelf A")));
+        mockMvc.perform(get("/api/books/{isbn}", isbn))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isbn").value(isbn))
+                .andExpect(jsonPath("$.title").value("Uno"));
+    }
 
-        mockMvc.perform(get("/api/books/123"))
+    @Test
+    public void shouldReturn404WhenBookNotFound() throws Exception {
+        String isbn = "9999";
+        when(bookService.findByIsbn(isbn)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/books/{isbn}", isbn))
                 .andExpect(status().isNotFound());
     }
 
-    //@Test
-    public void shouldReturnBookWhenFound() throws Exception {
-        when(bookService.findByIsbn(anyString())).thenReturn(Optional.of(new Book("123", "La coscienza di Zeno", List.of("Italo Svevo"), "Shelf C")));
-
-        mockMvc.perform(get("/api/books/122"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isbn", Matchers.equalTo("123")))
-                .andExpect(jsonPath("$.title", Matchers.equalTo("La coscienza di Zeno")));
-    }
-
+    @Test
     public void shouldAddBook() throws Exception {
-        when(bookService.createBook(any(Book.class))).thenReturn(new Book("123456789", "Test Book Stored", List.of("T. Author"), "Shelf D"));
-        mockMvc.perform(post("/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"isbn\" : \"123456789\", \"title\" : \"Test Book\", \"authors\" : [\"T. Author\"], \"location\": \"Shelf D\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/books/123456789"));
+        Book newBook = new Book("1234", "Uno", List.of("auth 01", "auth 02"), "Shelf A");
+        when(bookService.createBook(any(Book.class))).thenReturn(newBook);
 
+        mockMvc.perform(post("/api/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"isbn\":\"1234\",\"title\":\"Uno\",\"authors\":[\"auth 01\",\"auth 02\"],\"location\":\"Shelf A\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/books/1234"))
+                .andExpect(jsonPath("$.isbn").value("1234"))
+                .andExpect(jsonPath("$.title").value("Uno"));
     }
 
+    @Test
+    public void shouldUpdateBook() throws Exception {
+        String isbn = "1234";
+        Book updatedBook = new Book(isbn, "Updated Title", List.of("Updated Author"), "Updated Location");
+        when(bookService.updateBook(eq(isbn), any(Book.class))).thenReturn(Optional.of(updatedBook));
 
-}//:)
+        mockMvc.perform(put("/api/books/{isbn}", isbn)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"isbn\":\"1234\",\"title\":\"Updated Title\",\"authors\":[\"Updated Author\"],\"location\":\"Updated Location\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isbn").value(isbn))
+                .andExpect(jsonPath("$.title").value("Updated Title"))
+                .andExpect(jsonPath("$.authors", Matchers.containsInAnyOrder("Updated Author")))
+                .andExpect(jsonPath("$.location").value("Updated Location"));
+    }
+
+    @Test
+    public void shouldDeleteBook() throws Exception {
+        String isbn = "1234";
+        doNothing().when(bookService).deleteBook(isbn);
+
+        mockMvc.perform(delete("/api/books/{isbn}", isbn))
+                .andExpect(status().isNoContent());
+
+        verify(bookService, times(1)).deleteBook(isbn);
+    }
+}
