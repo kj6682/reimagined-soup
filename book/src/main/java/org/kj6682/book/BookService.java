@@ -1,6 +1,7 @@
 package org.kj6682.book;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,20 +31,6 @@ public class BookService {
     }
 
     @Transactional
-    public Book updateBook(Book updatedBook) {
-        Optional<Book> existingBookOptional = bookRepository.findByIsbn(updatedBook.getIsbn());
-        if (existingBookOptional.isPresent()) {
-            Book existingBook = existingBookOptional.get();
-            existingBook.setTitle(updatedBook.getTitle());
-            existingBook.setAuthors(updatedBook.getAuthors());
-            existingBook.setLocation(updatedBook.getLocation());
-            return bookRepository.save(existingBook);
-        } else {
-            throw new IllegalArgumentException("Book with ISBN " + updatedBook.getIsbn() + " not found");
-        }
-    }
-
-    @Transactional
     public void deleteAll() {
         bookRepository.deleteAll();
     }
@@ -51,4 +38,21 @@ public class BookService {
     public void saveAll(List<Book> books){
         bookRepository.saveAll(books);
     }
+
+    @Transactional
+    public Optional<Book> updateBook(String isbn, Book updatedBook) {
+        return bookRepository.findByIsbn(isbn).map(book -> {
+            book.setIsbn(updatedBook.getIsbn());
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthors(updatedBook.getAuthors());
+            book.setLocation(updatedBook.getLocation());
+            return bookRepository.save(book);
+        });
+    }
+
+    @Transactional
+    public void deleteBook(String isbn) {
+        bookRepository.findByIsbn(isbn).ifPresent(bookRepository::delete);
+    }
+
 }
