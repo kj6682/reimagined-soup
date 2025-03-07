@@ -1,8 +1,11 @@
 package org.kj6682.book;
 
+import org.kj6682.book.domain.Book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -20,6 +23,13 @@ public class BookController {
     @GetMapping("/{isbn}")
     public ResponseEntity<Book> get(@PathVariable("isbn") String isbn) {
         return ResponseEntity.of(bookService.findByIsbn(isbn));
+    }
+
+
+    @GetMapping("/byLocation")
+    public ResponseEntity<List<Book>> getBooksByLocation(@RequestParam("location") String location) {
+        List<Book> books = bookService.findByLocation(location);
+        return ResponseEntity.ok(books);
     }
 
     @PostMapping

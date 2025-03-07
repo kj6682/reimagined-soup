@@ -1,9 +1,12 @@
-package org.kj6682.book;
+package org.kj6682.book.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Set;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Book {
     @Id
@@ -12,15 +15,21 @@ public class Book {
     private String isbn;
     private String title;
 
-    @ElementCollection
-    @CollectionTable(name = "book_authors", joinColumns = @JoinColumn(name = "book_id"))
-    @Column(name = "author")
-    private List<String> authors;
+
+    @ManyToMany
+    @JoinTable(
+            name = "book_author",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private Set<Author> authors;
+
     private String location;
 
-    public Book() {}
+    public Book() {
+    }
 
-    public Book(String isbn, String title, List<String> authors, String location) {
+    public Book(String isbn, String title, Set<Author> authors, String location) {
         this.isbn = isbn;
         this.title = title;
         this.authors = authors;
@@ -47,11 +56,11 @@ public class Book {
         this.title = title;
     }
 
-    public List<String> getAuthors() {
+    public Set<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<String> authors) {
+    public void setAuthors(Set<Author> authors) {
         this.authors = authors;
     }
 

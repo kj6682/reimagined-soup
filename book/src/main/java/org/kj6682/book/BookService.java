@@ -1,9 +1,12 @@
 package org.kj6682.book;
 
+import org.kj6682.book.domain.AuthorRepository;
+import org.kj6682.book.domain.Book;
+import org.kj6682.book.domain.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,10 +15,14 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final LocaleResolver localeResolver;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, LocaleResolver localeResolver) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.localeResolver = localeResolver;
     }
 
     public List<Book> findAll() {
@@ -25,7 +32,11 @@ public class BookService {
     public Optional<Book> findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn);
     }
-    
+
+    public List<Book> findByLocation(String location) {
+        return bookRepository.findByLocation(location);
+    }
+
     public Book createBook(Book book) {
         return bookRepository.save(book);
     }
@@ -35,6 +46,7 @@ public class BookService {
         bookRepository.deleteAll();
     }
 
+    @Transactional
     public void saveAll(List<Book> books){
         bookRepository.saveAll(books);
     }
