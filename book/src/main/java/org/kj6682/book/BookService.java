@@ -15,14 +15,10 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final LocaleResolver localeResolver;
 
     @Autowired
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, LocaleResolver localeResolver) {
+    public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
-        this.localeResolver = localeResolver;
     }
 
     public List<Book> findAll() {
@@ -56,7 +52,6 @@ public class BookService {
         return bookRepository.findByIsbn(isbn).map(book -> {
             book.setIsbn(updatedBook.getIsbn());
             book.setTitle(updatedBook.getTitle());
-            book.setAuthors(updatedBook.getAuthors());
             book.setLocation(updatedBook.getLocation());
             return bookRepository.save(book);
         });

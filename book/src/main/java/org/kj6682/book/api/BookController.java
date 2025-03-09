@@ -1,5 +1,6 @@
-package org.kj6682.book;
+package org.kj6682.book.api;
 
+import org.kj6682.book.BookService;
 import org.kj6682.book.domain.Book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

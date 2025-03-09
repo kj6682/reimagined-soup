@@ -16,23 +16,17 @@ public class Book {
     private String title;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "book_author",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private Set<Author> authors;
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BooksAuthors> booksAuthors;
 
     private String location;
 
     public Book() {
     }
 
-    public Book(String isbn, String title, Set<Author> authors, String location) {
+    public Book(String isbn, String title, String location) {
         this.isbn = isbn;
         this.title = title;
-        this.authors = authors;
         this.location = location;
     }
 
@@ -56,14 +50,12 @@ public class Book {
         this.title = title;
     }
 
-    public Set<Author> getAuthors() {
-        return authors;
+    public Set<BooksAuthors> getBooksAuthors() {
+        return booksAuthors;
     }
-
-    public void setAuthors(Set<Author> authors) {
-        this.authors = authors;
+    public void setBooksAuthors(Set<BooksAuthors> booksAuthors) {
+        this.booksAuthors = booksAuthors;
     }
-
     public String getLocation() {
         return location;
     }

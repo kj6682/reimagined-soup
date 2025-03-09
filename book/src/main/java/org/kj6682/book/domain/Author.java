@@ -15,8 +15,8 @@ public class Author {
     private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "authors", fetch = FetchType.LAZY)
-    private Set<Book> books;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BooksAuthors> booksAuthors;
 
     public Author() {}
 
@@ -40,11 +40,10 @@ public class Author {
         this.name = name;
     }
 
-    public Set<Book> getBooks() {
-        return books;
+    public Set<BooksAuthors> getBooksAuthors() {
+        return booksAuthors;
     }
-
-    public void setBooks(Set<Book> books) {
-        this.books = books;
+    public void setBooksAuthors(Set<BooksAuthors> booksAuthors) {
+        this.booksAuthors = booksAuthors;
     }
 }

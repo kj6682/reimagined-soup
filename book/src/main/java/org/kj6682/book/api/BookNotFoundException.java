@@ -1,4 +1,4 @@
-package org.kj6682.book;
+package org.kj6682.book.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
