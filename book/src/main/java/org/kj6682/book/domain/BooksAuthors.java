@@ -2,21 +2,20 @@ package org.kj6682.book.domain;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 public class BooksAuthors {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "book_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Book book;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "author_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Author author;
 
     public BooksAuthors() {}
@@ -40,5 +39,26 @@ public class BooksAuthors {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    @Override
+    public String toString() {
+        return "BooksAuthors{" +
+                "id=" + id +
+                ", book=" + book +
+                ", author=" + author +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BooksAuthors that = (BooksAuthors) o;
+        return Objects.equals(book, that.book) && Objects.equals(author, that.author);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(book, author);
     }
 }

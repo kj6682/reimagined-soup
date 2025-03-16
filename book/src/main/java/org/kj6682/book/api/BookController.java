@@ -1,6 +1,5 @@
 package org.kj6682.book.api;
 
-import org.kj6682.book.BookService;
 import org.kj6682.book.domain.Book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +17,15 @@ public class BookController {
 
     @GetMapping
     public Iterable<Book> all() {
-        return bookService.findAll();
+        return bookService.fetchAllBooks();
     }
 
-    @GetMapping("/{isbn}")
-    public ResponseEntity<Book> get(@PathVariable("isbn") String isbn) {
-        return ResponseEntity.of(bookService.findByIsbn(isbn));
+    @GetMapping("/isbn/{isbn}")
+    public Iterable<Book>  get(@PathVariable("isbn") String isbn) {
+        return bookService.findByIsbn(isbn);
     }
 
-
-    @GetMapping("/byLocation")
+    @GetMapping("/location/{location}")
     public ResponseEntity<List<Book>> getBooksByLocation(@RequestParam("location") String location) {
         List<Book> books = bookService.findByLocation(location);
         return ResponseEntity.ok(books);
@@ -40,14 +38,8 @@ public class BookController {
         return ResponseEntity.created(newBookUri).body(created);
     }
 
-    @PutMapping("/{isbn}")
-    public ResponseEntity<Book> update(@PathVariable("isbn") String isbn, @RequestBody Book book) {
-        return ResponseEntity.of(bookService.updateBook(isbn, book));
-    }
-
-    @DeleteMapping("/{isbn}")
-    public ResponseEntity<Void> delete(@PathVariable("isbn") String isbn) {
-        bookService.deleteBook(isbn);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/update")
+    public Book updateBook(@RequestBody Book book) {
+        return bookService.updateBook(book);
     }
 }
