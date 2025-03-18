@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends CrudRepository<Book, Long> {
 
+    List<Book> findAll();
+
     @Query("SELECT b FROM Book b")
     List<Book> fetchAllBooks();
 
@@ -20,13 +22,5 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE b.isbn LIKE %:isbn%")
     List<Book> findByIsbn(@Param("isbn") String isbn);
 
-    @Query("SELECT b FROM Book b WHERE b.location LIKE %:location%")
-    List<Book> findByLocation(@Param("location") String location);
-
-    @Query("SELECT b FROM Book b " +
-            "JOIN b.booksAuthors ba " +
-            "JOIN ba.author a " +
-            "WHERE b.id = :bookId")
-    Book findBookWithAuthors(@Param("bookId") Long bookId);
 
 }

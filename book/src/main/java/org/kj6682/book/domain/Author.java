@@ -3,6 +3,7 @@ package org.kj6682.book.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "Author")
@@ -14,10 +15,12 @@ public class Author {
     private Long id;
 
     private String name;
+    @Column(length = 500)
+    private String biography;
 
     @JsonIgnore
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BooksAuthors> booksAuthors;
+    private Set<LibraryRegisterEntry> libraryRegisterEntries;
 
     public Author() {}
 
@@ -41,10 +44,40 @@ public class Author {
         this.name = name;
     }
 
-    public Set<BooksAuthors> getBooksAuthors() {
-        return booksAuthors;
+    public String getBiography(){
+        return biography;
     }
-    public void setBooksAuthors(Set<BooksAuthors> booksAuthors) {
-        this.booksAuthors = booksAuthors;
+
+    public void setBiography(String biography){
+        this.biography = biography;
+    }
+
+    public Set<LibraryRegisterEntry> getLibraryRegisterEntries() {
+        return libraryRegisterEntries;
+    }
+
+    public void setLibraryRegisterEntries(Set<LibraryRegisterEntry> libraryRegisterEntries) {
+        this.libraryRegisterEntries = libraryRegisterEntries;
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", biography='" + biography + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return Objects.equals(id, author.id) && Objects.equals(name, author.name) && Objects.equals(biography, author.biography);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, biography);
     }
 }

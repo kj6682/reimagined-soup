@@ -16,20 +16,16 @@ public class BookController {
     }
 
     @GetMapping
-    public Iterable<Book> all() {
-        return bookService.fetchAllBooks();
+    public Iterable<BookDto> all() {
+        return bookService.getAllBooks();
     }
+
 
     @GetMapping("/isbn/{isbn}")
     public Iterable<Book>  get(@PathVariable("isbn") String isbn) {
         return bookService.findByIsbn(isbn);
     }
 
-    @GetMapping("/location/{location}")
-    public ResponseEntity<List<Book>> getBooksByLocation(@RequestParam("location") String location) {
-        List<Book> books = bookService.findByLocation(location);
-        return ResponseEntity.ok(books);
-    }
 
     @PostMapping
     public ResponseEntity<Book> create(@RequestBody Book book, UriComponentsBuilder uriComponentsBuilder) {

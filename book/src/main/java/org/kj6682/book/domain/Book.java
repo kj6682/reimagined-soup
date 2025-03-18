@@ -17,20 +17,19 @@ public class Book {
     private Long id;
     private String isbn;
     private String title;
+    private String summary;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BooksAuthors> booksAuthors;
-
-    private String location;
+    private Set<LibraryRegisterEntry> libraryRegisterEntries;
 
     public Book() {
     }
 
-    public Book(String isbn, String title, String location) {
+    public Book(String isbn, String title) {
         this.isbn = isbn;
         this.title = title;
-        this.location = location;
     }
 
     public Long getId() {
@@ -53,29 +52,18 @@ public class Book {
         this.title = title;
     }
 
-    public Set<BooksAuthors> getBooksAuthors() {
-        return booksAuthors;
+    public Set<LibraryRegisterEntry> getLibraryRegisterEntries() {
+        return libraryRegisterEntries;
     }
-    public void setBooksAuthors(Set<BooksAuthors> booksAuthors) {
-        this.booksAuthors = booksAuthors;
+    public void setLibraryRegisterEntries(Set<LibraryRegisterEntry> libraryRegisterEntries) {
+        this.libraryRegisterEntries = libraryRegisterEntries;
     }
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+    public String getSummary() {
+        return summary;
     }
 
-    public void addAuthor(Author author) {
-        BooksAuthors booksAuthors = new BooksAuthors(this, author);
-        this.booksAuthors.add(booksAuthors);
-        author.getBooksAuthors().add(booksAuthors);
-    }
-    public void removeAuthor(Author author) {
-        BooksAuthors booksAuthors = new BooksAuthors(this, author);
-        this.booksAuthors.remove(booksAuthors);
-        author.getBooksAuthors().remove(booksAuthors);
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     @Override
@@ -84,7 +72,7 @@ public class Book {
                 "id=" + id +
                 ", isbn='" + isbn + '\'' +
                 ", title='" + title + '\'' +
-                ", location='" + location + '\'' +
+                ", summary='" + summary + '\'' +
                 '}';
     }
     @Override

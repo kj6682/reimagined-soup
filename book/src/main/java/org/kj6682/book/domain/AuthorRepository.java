@@ -9,4 +9,8 @@ import java.util.List;
 
 @Repository
 public interface AuthorRepository extends CrudRepository<Author, Long> {
+    List<Author> findAll();
+
+    @Query("SELECT a FROM Author a WHERE a.name LIKE %:name%")
+    List<Author> findByName(@Param("name") String name);
 }
