@@ -56,5 +56,9 @@ public class LibraryService {
 
         libraryRegisterEntryRepository.saveAll(List.of(libraryRegisterEntry1, libraryRegisterEntry2, libraryRegisterEntry3, libraryRegisterEntry4, libraryRegisterEntry5, libraryRegisterEntry6_1, libraryRegisterEntry6_2));
     }
+
+    public List<BookDetailsDto> getBookDetailsByBookId(Long bookId) {
+        return libraryRegisterEntryRepository.findBookDetailsByBookId(bookId);
+    }
 }
 
