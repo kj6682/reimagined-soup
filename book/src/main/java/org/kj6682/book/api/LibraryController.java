@@ -14,7 +14,12 @@ public class LibraryController {
     private LibraryService libraryService;
 
     @GetMapping("/api/book-details")
-    public List<BookDetailsDto> getBookDetails(@RequestParam Long bookId) {
+    public List<BookDetailsDto> getAllBookDetails() {
+        return libraryService.getAllBookDetails();
+    }
+
+    @GetMapping("/api/book-details/{bookId}")
+    public List<BookDetailsDto> getBookDetailsByBookId(@RequestParam Long bookId) {
         return libraryService.getBookDetailsByBookId(bookId);
     }
 }

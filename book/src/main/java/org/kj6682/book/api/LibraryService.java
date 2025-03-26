@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,8 +58,29 @@ public class LibraryService {
         libraryRegisterEntryRepository.saveAll(List.of(libraryRegisterEntry1, libraryRegisterEntry2, libraryRegisterEntry3, libraryRegisterEntry4, libraryRegisterEntry5, libraryRegisterEntry6_1, libraryRegisterEntry6_2));
     }
 
+    public List<BookDetailsDto> getAllBookDetails() {
+        List<Object[]> queryResults = libraryRegisterEntryRepository.findAllBookDetails();
+        return getBookDetailsDtos(queryResults);
+
+    }
     public List<BookDetailsDto> getBookDetailsByBookId(Long bookId) {
-        return libraryRegisterEntryRepository.findBookDetailsByBookId(bookId);
+        List<Object[]> queryResults = libraryRegisterEntryRepository.findBookDetailsByBookId(bookId);
+        return getBookDetailsDtos(queryResults);
+    }
+
+    private static List<BookDetailsDto> getBookDetailsDtos(List<Object[]> queryResults) {
+        List<BookDetailsDto> bookDetailsList = new ArrayList<>();
+
+        for (Object[] result : queryResults) {
+            BookDetailsDto dto = new BookDetailsDto(
+                    (String) result[2], // title
+                    (String) result[3], // authors (comma-separated string)
+                    (String) result[4]  // location
+            );
+            bookDetailsList.add(dto);
+        }
+
+        return bookDetailsList;
     }
 }
 
